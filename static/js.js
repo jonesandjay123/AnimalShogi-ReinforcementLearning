@@ -24,7 +24,6 @@
     CreateBoard(0);
 
     document.getElementById("start-game").onclick = StartHumanGame;
-    document.getElementById("start-ai-game").onclick = StartAIGame;
 
     var last_player_id = getCookie("player_id");
     if (last_player_id != "") {
