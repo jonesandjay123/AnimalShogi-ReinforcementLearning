@@ -172,7 +172,7 @@ def PrintBoard(board):
     for _ in range(HEIGHT):
         char_board.append([" "] * WIDTH)
     benches = [[" "] * 3, [" "] * 3]
-    for pos, token in board.iteritems():
+    for pos, token in board.items():
         if _IsOnBench(pos):
             player = int(pos[1]) - 1
             spot = int(pos[3])
@@ -381,7 +381,7 @@ def _IsLionAtEnd(board, player):
 
 
 def FindLion(board, player):
-    pos_of_lion = [pos for pos, token in board.iteritems()
+    pos_of_lion = [pos for pos, token in board.items()
                    if token.owner == player and token.piece == LION]
     if not pos_of_lion:
         return None

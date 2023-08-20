@@ -58,7 +58,7 @@ class Handler:
         player_1 = Player(shogi.PLAYER1, True)
         player_2 = Player(shogi.PLAYER2, True)
         players = {1: player_1, 2: player_2}
-        state = GameState(game, players)
+        self.game_state = GameState(game, players)
         return self.GetStatus(1)
 
     def GetStatus(self, player_id):
