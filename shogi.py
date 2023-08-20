@@ -17,8 +17,8 @@ LION = "lion"
 PLAYER1 = 0
 PLAYER2 = 1
 
-_PLAYER1BENCH = ["P1B" + str(i) for i in xrange(3)]
-_PLAYER2BENCH = ["P2B" + str(i) for i in xrange(3)]
+_PLAYER1BENCH = ["P1B" + str(i) for i in range(3)]
+_PLAYER2BENCH = ["P2B" + str(i) for i in range(3)]
 
 Token = namedtuple('Token', ['piece', 'owner'])
 ExpandedPoint = namedtuple('ExpandedPoint', ['x', 'y'])
@@ -28,7 +28,7 @@ def Point(x, y):
   return "%d%d" % (x, y)
 
 _ORDER = _PLAYER2BENCH + _PLAYER1BENCH + (
-    [Point(x, y) for x in xrange(WIDTH) for y in xrange(HEIGHT)])
+    [Point(x, y) for x in range(WIDTH) for y in range(HEIGHT)])
 
 def GetX(point):
   return int(point[0])
@@ -149,7 +149,7 @@ def PrintBoard(board):
   out = "=" * (WIDTH + 2)
   out += "\n"
   char_board = []
-  for _ in xrange(HEIGHT):
+  for _ in range(HEIGHT):
     char_board.append([" "] * WIDTH)
   benches = [[" "] * 3, [" "] * 3]
   for pos, token in board.iteritems():
@@ -164,7 +164,7 @@ def PrintBoard(board):
   out += "\n"
   out += "+" + "=" * WIDTH + "+"
   out += "\n"
-  for y in reversed(xrange(HEIGHT)):
+  for y in reversed(range(HEIGHT)):
     out += "|"
     out += "".join(char_board[y])
     out += "|\n"
@@ -252,7 +252,7 @@ def _GetPossiblePositions(board, token, pos):
   if _IsOnBench(pos):
     return filter(lambda point: not IsOwnedBy(board, PLAYER1, point), 
         filter(lambda point: not IsOwnedBy(board, PLAYER2, point), 
-        (Point(x, y) for x in xrange(WIDTH) for y in xrange(HEIGHT))))
+        (Point(x, y) for x in range(WIDTH) for y in range(HEIGHT))))
   offsets = _GetOffsets(token.piece)
   return filter(lambda new_pos: not IsOwnedBy(board, token.owner, new_pos),
       map(FromExpandedPoint,
