@@ -10,6 +10,17 @@ HOST, PORT = '', 8888
 Environment = collections.namedtuple('Environment', ['args', 'method', 'body'])
 
 
+class BaseHandler:
+    def __init__(self, env):
+        self.env = env
+
+    def Handle(self):
+        pass
+
+    def SendFile(self, path):
+        pass
+
+
 class Server(object):
 
     address_family = socket.AF_INET
