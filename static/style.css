@@ -1,0 +1,30 @@
+body {
+  margin: 20px;
+  width: 400px;
+}
+
+#board table {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+#board table td {
+  border: 1px solid black;
+  width: 50px;
+  /* Yay CSS! */
+  height: 61px;
+  padding: 5px;
+  user-select: none;
+}
+
+#main-board {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+#img-hidden {
+  position: absolute;
+  pointer-events: none;
+  top:5px;
+  left: 10px;
+}
