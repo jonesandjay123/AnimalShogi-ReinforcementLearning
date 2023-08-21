@@ -210,7 +210,7 @@
       setCookie("player_id", player_id);
       setCookie("player", player);
       CreateBoard();
-      aClient.get("get_game_status" + GetArgs(), UpdateGame);
+      UpdateGame(responseStr); // Update the game immediately after creating the board
     });
   }
 
