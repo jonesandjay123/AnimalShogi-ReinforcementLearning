@@ -1,75 +1,37 @@
+from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-import os
-import server
 import shogi
 
-
-class ContentTypes:
-    PLAIN = ('Content-Type', 'text/plain')
-    JSON = ('Content-Type', 'application/json')
-    HTML = ('Content-Type', 'text/html')
-    CSS = ('Content-Type', 'text/css')
-    JAVASCRIPT = ('Content-Type', 'text/javascript')
+PORT = 8008
 
 
-class Handler:
-    def __init__(self, path, env, start_response):
-        self.path = path
-        self.env = env
-        self.start_response = start_response
-        self.code = 200
-        self.content_type = ContentTypes.JSON
-        self.headers = []
+class RequestHandler(BaseHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        self.game = shogi.Game()
+        super().__init__(*args, **kwargs)
 
-    def Handle(self):
-        if self.path == "start_game":
-            return self.StartGame()
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        response = {}
+        if self.path == '/start_game':
+            response = self.start_game()
+        elif self.path.startswith('/move'):
+            pass
+        self.wfile.write(json.dumps(response).encode('utf-8'))
 
-        return self.ReadFile()
-
-    def StartGame(self):
-        game = shogi.Game()
-        payload = {
-            'board': game.board,
-            'status': game.status[game.player],
-            'current_player': game.player
-        }
-        return json.dumps(payload)
-
-    def ReadFile(self):
-        if self.path == '':
-            self.path = 'index.html'
-
-        file_path = 'static/' + self.path
-        if os.path.isfile(file_path):
-            if file_path.endswith(".html"):
-                self.content_type = ContentTypes.HTML
-            if file_path.endswith(".css"):
-                self.content_type = ContentTypes.CSS
-            if file_path.endswith(".js"):
-                self.content_type = ContentTypes.JAVASCRIPT
-            with open(file_path, 'r') as f:
-                return f.read()
-        else:
-            self.code = 404
-            self.content_type = ContentTypes.HTML
-            return "<h1>404 Page Not Found<h1>"
+    def start_game(self):
+        self.game.reset()
+        return {'board': self.game.board.to_dict(), 'status': 'started'}
 
 
-def _EntryPoint(path, env, start_response):
-    assert path[0] == '/'
-    path = path[1:]
-    handler = Handler(path, env, start_response)
-    contents = handler.Handle()
-
-    headers = [handler.content_type] + handler.headers
-    start_response(handler.code, headers)
-    return [contents]
+def run():
+    server_address = ('', PORT)
+    httpd = HTTPServer(server_address, RequestHandler)
+    print(f'Serving on port {PORT}')
+    httpd.serve_forever()
 
 
-def SetUp():
-    server.Server(('', 8008), _EntryPoint).ServeForever(True)
-
-
-if __name__ == "__main__":
-    SetUp()
+if __name__ == '__main__':
+    run()

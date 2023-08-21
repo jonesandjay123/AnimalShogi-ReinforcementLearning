@@ -54,6 +54,12 @@ class Board(dict):
     def __hash__(self):
         return hash(''.join(self.get(pos, ' ')[0] for pos in _ORDER))
 
+    def to_dict(self):
+        board_dict = {}
+        for position, piece in self.items():
+            board_dict[position] = [piece.token, piece.player]
+        return board_dict
+
 
 class PlayerStatus:
     PLAYING = 'playing'
