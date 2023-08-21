@@ -5,8 +5,8 @@
   var board_div;
   var status_span;
 
-  var player_id = 1;
-  var player = 1;
+  var player_id;
+  var player;
 
   var board;
   var current_moves;
@@ -20,8 +20,8 @@
   function Loaded() {
     board_div = document.getElementById("board");
     status_span = document.getElementById("turn");
-    player = 1;
-    CreateBoard();
+    player = 0;
+    CreateBoard(0);
 
     document.getElementById("start-game").onclick = StartHumanGame;
     document.getElementById("start-ai-game").onclick = StartAIGame;
@@ -200,7 +200,7 @@
       player_id = response.player_id;
       player = response.player;
       CreateBoard();
-      aClient.get("get_game_status" + GetArgs(), UpdateGame);
+      UpdateGame(responseStr);
     });
   }
 
@@ -229,6 +229,11 @@
   }
 
   function UpdateGame(updateStr) {
+    if (updateStr === "{}") {
+      var aClient = new HttpClient();
+      aClient.get("get_game_status" + GetArgs(), UpdateGame);
+      return;
+    }
     var update = JSON.parse(updateStr);
 
     UpdateBoard(update.board);
