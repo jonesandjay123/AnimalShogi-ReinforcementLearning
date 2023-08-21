@@ -5,8 +5,8 @@
   var board_div;
   var status_span;
 
-  var player_id;
-  var player;
+  var player_id = 1;
+  var player = 1;
 
   var board;
   var current_moves;
@@ -20,19 +20,11 @@
   function Loaded() {
     board_div = document.getElementById("board");
     status_span = document.getElementById("turn");
-    player = 0;
-    CreateBoard(0);
+    player = 1;
+    CreateBoard();
 
     document.getElementById("start-game").onclick = StartHumanGame;
-
-    var last_player_id = getCookie("player_id");
-    if (last_player_id != "") {
-      player_id = last_player_id;
-      player = getCookie("player");
-      CreateBoard();
-      var client = new HttpClient();
-      client.get("get_game_status" + GetArgs(), UpdateGame);
-    }
+    document.getElementById("start-ai-game").onclick = StartAIGame;
   }
 
   function MakeBoardTD(id) {
@@ -207,16 +199,14 @@
       var response = JSON.parse(responseStr);
       player_id = response.player_id;
       player = response.player;
-      setCookie("player_id", player_id);
-      setCookie("player", player);
       CreateBoard();
-      UpdateGame(responseStr); // Update the game immediately after creating the board
+      aClient.get("get_game_status" + GetArgs(), UpdateGame);
     });
   }
 
   function TokenToImage(token) {
     var up_or_down = token[1] == player ? "up" : "down";
-    return "img/" + token[0] + "_" + up_or_down + ".png";
+    return "/static/img/" + token[0] + "_" + up_or_down + ".png";
   }
 
   function TokenToImgTag(token, id) {
