@@ -57,7 +57,7 @@ class Board(dict):
     def to_dict(self):
         board_dict = {}
         for position, piece in self.items():
-            board_dict[position] = [piece.token, piece.player]
+            board_dict[position] = [piece.piece, piece.owner]
         return board_dict
 
 
