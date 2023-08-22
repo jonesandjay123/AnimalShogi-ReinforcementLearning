@@ -196,6 +196,7 @@
     status_span.innerHTML = "Waiting for another player...";
     var aClient = new HttpClient();
     aClient.get(url, function (responseStr) {
+      console.log("Received response from server:", responseStr);
       var response = JSON.parse(responseStr);
       player_id = response.player_id;
       player = response.player;
@@ -235,6 +236,11 @@
       return;
     }
     var update = JSON.parse(updateStr);
+
+    if (!update.moves) {
+      console.error("Did not receive valid moves from server.");
+      return;
+    }
 
     UpdateBoard(update.board);
 

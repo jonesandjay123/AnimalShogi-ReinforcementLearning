@@ -52,7 +52,8 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     def start_game(self):
         self.game = shogi.Game()  # 重新初始化遊戲
-        return {'board': self.game.board.to_dict(), 'status': 'started'}
+        board_dict = self.game.board.to_dict()
+        return {'board': board_dict, 'moves': {}, 'status': 'started'}
 
 
 def run():
