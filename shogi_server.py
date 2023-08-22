@@ -12,22 +12,23 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         if self.path == '/':
-            # Return the main page HTML
-            self.send_response(200)
-            self.send_header('Content-Type', 'text/html')
-            self.end_headers()
             with open('static/index.html', 'r') as file:
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/html')
+                self.end_headers()
                 self.wfile.write(file.read().encode('utf-8'))
-        elif self.path == '/start_game':
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            response = self.start_game()
-            self.wfile.write(json.dumps(response).encode('utf-8'))
-        else:
-            # Handle other routes if necessary
-            self.send_response(404)
-            self.end_headers()
+                return
+        elif self.path in ['/lib.js', '/js.js', '/style.css']:
+            file_path = 'static' + self.path
+            with open(file_path, 'r') as file:
+                self.send_response(200)
+                if self.path.endswith('.js'):
+                    self.send_header('Content-Type', 'application/javascript')
+                elif self.path.endswith('.css'):
+                    self.send_header('Content-Type', 'text/css')
+                self.end_headers()
+                self.wfile.write(file.read().encode('utf-8'))
+                return
 
     def start_game(self):
         self.game.reset()
