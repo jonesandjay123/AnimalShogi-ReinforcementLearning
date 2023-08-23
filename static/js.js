@@ -72,6 +72,7 @@
 
   function StartHolding(element, evt) {
     holding = element.id;
+    console.log("Currently holding:", holding);
     holding_img = element.innerHTML;
     element.innerHTML = "";
     document.getElementById("hidden").innerHTML = TokenToImgTag(
@@ -104,15 +105,21 @@
     for (var i = 0; i < board_squares.length; i++) {
       var board_square = board_squares[i];
       board_square.onmousedown = function (e) {
+        console.log("Is it your turn?", is_your_turn);
+        console.log("Mouse down detected on square:", this.id); // Add this line
+        console.log("Current possible moves:", current_moves);
         if (!is_your_turn) return;
 
         ClearAllBackgrounds();
         if (clicked_on != "") {
+          console.log("A piece was previously clicked:", clicked_on);
           var old_clicked_on = clicked_on;
           clicked_on = "";
           if (this.id in current_moves[old_clicked_on]) {
             Move(old_clicked_on, this.id);
             return;
+          } else {
+            console.log("Invalid move from", clicked_on, "to", this.id);
           }
         }
         this.style.backgroundColor = "orange";
@@ -123,6 +130,8 @@
         ColourPossibleMoves(this.id);
       };
       board_square.onmouseup = function (e) {
+        console.log("Mouse up detected on square:", this.id); // Add this line
+        console.log("Current possible moves:", current_moves);
         if (!is_your_turn) return;
         if (holding == "") return;
 
@@ -277,10 +286,24 @@
   }
 
   function Move(from, to) {
-    is_your_turn = false;
-    UpdateBoard(current_moves[from][to]);
-    var aClient = new HttpClient();
-    aClient.get("move" + GetArgs() + "&from=" + from + "&to=" + to, UpdateGame);
+    console.log("Attempting to move from", from, "to", to);
+
+    if (!is_your_turn) {
+      console.log("Not your turn!");
+      return;
+    }
+
+    var client = new HttpClient();
+    client.get("/move?from=" + from + "&to=" + to, function (response) {
+      console.log("Received response from server:", response);
+      if (response.status === "success") {
+        UpdateGame(response.board);
+      } else {
+        console.log("Invalid move.");
+      }
+    });
+
+    console.log("Sending move request to server...");
   }
 
   function GetArgs() {

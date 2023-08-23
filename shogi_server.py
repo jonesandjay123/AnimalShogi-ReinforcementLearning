@@ -1,15 +1,15 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+
 import shogi
 
 PORT = 8008
 
+# Global variable to keep track of the current game state
+current_game = shogi.Game()
+
 
 class RequestHandler(BaseHTTPRequestHandler):
-    def __init__(self, *args, **kwargs):
-        self.game = shogi.Game()
-        super().__init__(*args, **kwargs)
-
     def do_GET(self):
         try:
             if self.path == '/':
@@ -51,9 +51,13 @@ class RequestHandler(BaseHTTPRequestHandler):
             print(f"Error occurred: {e}")
 
     def start_game(self):
-        self.game = shogi.Game()  # 重新初始化遊戲
-        board_dict = self.game.board.to_dict()
-        return {'board': board_dict, 'moves': {}, 'status': 'started'}
+        global current_game
+
+        current_game = shogi.Game()  # 重新初始化遊戲
+        board_dict = current_game.board.to_dict()
+        possible_moves = shogi.PossibleMoves(
+            current_game.board, current_game.player)
+        return {'board': board_dict, 'moves': possible_moves, 'status': 'started'}
 
 
 def run():
