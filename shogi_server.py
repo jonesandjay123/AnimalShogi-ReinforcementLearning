@@ -33,6 +33,13 @@ class RequestHandler(BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(file.read().encode('utf-8'))
                     return
+            elif self.path == '/favicon.ico':
+                with open('static/favicon.ico', 'rb') as file:
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'image/x-icon')
+                    self.end_headers()
+                    self.wfile.write(file.read())
+                return
             elif self.path.startswith('/static/img/'):
                 file_path = self.path[1:]
                 with open(file_path, 'rb') as file:
