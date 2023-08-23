@@ -255,7 +255,10 @@
 
     // Set the player value and player_id value first
     player = update.player;
-    player_id = update.player_id; // Add this line
+    player_id = update.player_id;
+
+    console.log("Setting player value to:", player); // Added debug output
+    console.log("Setting player_id value to:", player_id); // Added debug output
 
     UpdateBoard(update.board);
 
@@ -279,7 +282,10 @@
       return;
     }
 
+    console.log("Current player from server:", update.current_player);
     is_your_turn = update.current_player == player;
+    console.log("Is it your turn after update?", is_your_turn); // Added debug output
+
     var turn_str = is_your_turn ? "Your Turn" : "Opponent's Turn";
     status_span.innerHTML = player_str + ": " + turn_str;
 
