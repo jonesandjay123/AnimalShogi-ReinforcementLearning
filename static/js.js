@@ -253,8 +253,9 @@
       return;
     }
 
-    // Set the player value first
+    // Set the player value and player_id value first
     player = update.player;
+    player_id = update.player_id; // Add this line
 
     UpdateBoard(update.board);
 
