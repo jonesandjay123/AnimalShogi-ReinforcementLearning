@@ -92,10 +92,11 @@ class RequestHandler(BaseHTTPRequestHandler):
         global current_game
 
         current_game = shogi.Game()  # 重新初始化遊戲
+        current_game.player = 1  # 確保player1始終先手
         board_dict = current_game.board.to_dict()
         possible_moves = shogi.PossibleMoves(
             current_game.board, current_game.player)
-        return {'board': board_dict, 'moves': possible_moves, 'status': 'started'}
+        return {'board': board_dict, 'moves': possible_moves, 'status': 'started', 'player': current_game.player}
 
 
 def run():

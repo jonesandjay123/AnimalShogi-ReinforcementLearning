@@ -109,15 +109,15 @@ class bcolors:
 
 def StartingBoard():
     board = EmptyBoard()
-    board[Point(0, 0)] = Token(ELEPHANT, PLAYER1)
-    board[Point(1, 0)] = Token(LION, PLAYER1)
-    board[Point(2, 0)] = Token(GIRAFFE, PLAYER1)
-    board[Point(1, 1)] = Token(CHICK, PLAYER1)
+    board[Point(0, 0)] = Token(ELEPHANT, PLAYER2)
+    board[Point(1, 0)] = Token(LION, PLAYER2)
+    board[Point(2, 0)] = Token(GIRAFFE, PLAYER2)
+    board[Point(1, 1)] = Token(CHICK, PLAYER2)
 
-    board[Point(2, 3)] = Token(ELEPHANT, PLAYER2)
-    board[Point(1, 3)] = Token(LION, PLAYER2)
-    board[Point(0, 3)] = Token(GIRAFFE, PLAYER2)
-    board[Point(1, 2)] = Token(CHICK, PLAYER2)
+    board[Point(2, 3)] = Token(ELEPHANT, PLAYER1)
+    board[Point(1, 3)] = Token(LION, PLAYER1)
+    board[Point(0, 3)] = Token(GIRAFFE, PLAYER1)
+    board[Point(1, 2)] = Token(CHICK, PLAYER1)
 
     return board
 

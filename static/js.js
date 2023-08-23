@@ -207,7 +207,7 @@
     aClient.get(url, function (responseStr) {
       console.log("Received response from server:", responseStr);
       var response = JSON.parse(responseStr);
-      player_id = response.player_id;
+      player_id = response.player_id; // 這一行非常重要
       player = response.player;
       CreateBoard();
       UpdateGame(responseStr);
@@ -231,13 +231,12 @@
   }
 
   function UpdateBoard(new_board) {
-    console.log("Updating board with:", new_board);
+    console.log("Player value when updating board:", player); // Add this line
     board = new_board;
     ClearAllCells();
     Object.keys(board).forEach(function (key) {
       document.getElementById(key).innerHTML = TokenToImgTag(board[key], key);
     });
-    console.log("Board updated.");
   }
 
   function UpdateGame(updateStr) {
@@ -253,6 +252,9 @@
       console.error("Did not receive valid moves from server.");
       return;
     }
+
+    // Set the player value first
+    player = update.player;
 
     UpdateBoard(update.board);
 
