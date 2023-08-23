@@ -231,11 +231,13 @@
   }
 
   function UpdateBoard(new_board) {
+    console.log("Updating board with:", new_board);
     board = new_board;
     ClearAllCells();
     Object.keys(board).forEach(function (key) {
       document.getElementById(key).innerHTML = TokenToImgTag(board[key], key);
     });
+    console.log("Board updated.");
   }
 
   function UpdateGame(updateStr) {
@@ -245,6 +247,7 @@
       return;
     }
     var update = JSON.parse(updateStr);
+    console.log("Update received:", update);
 
     if (!update.moves) {
       console.error("Did not receive valid moves from server.");
@@ -299,11 +302,12 @@
       if (response.status === "success") {
         UpdateGame(response.board);
       } else {
-        console.log("Invalid move.");
+        console.log("Invalid move. Reason:", response.status); // 修改此行以印出具體的原因
       }
     });
 
     console.log("Sending move request to server...");
+    console.log("Move function end"); // Add this line
   }
 
   function GetArgs() {

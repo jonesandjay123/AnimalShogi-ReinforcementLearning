@@ -1,6 +1,8 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 
+import urllib
+
 import shogi
 
 PORT = 8008
@@ -40,6 +42,13 @@ class RequestHandler(BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(file.read())
                     return
+            elif self.path.startswith('/move'):
+                response = self.handle_move_request()
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps(response).encode('utf-8'))
+                return
             elif self.path == '/start_game':
                 response = self.start_game()
                 self.send_response(200)
@@ -49,6 +58,25 @@ class RequestHandler(BaseHTTPRequestHandler):
                 return
         except Exception as e:
             print(f"Error occurred: {e}")
+
+    def handle_move_request(self):
+        global current_game
+
+        parsed_path = urllib.parse.urlparse(self.path)
+        query_parameters = urllib.parse.parse_qs(parsed_path.query)
+
+        from_pos = query_parameters.get('from')[0]
+        to_pos = query_parameters.get('to')[0]
+
+        possible_moves = shogi.PossibleMoves(
+            current_game.board, current_game.player)
+
+        if from_pos in possible_moves and to_pos in possible_moves[from_pos]:
+            current_game.board = possible_moves[from_pos][to_pos]
+            current_game.player = 3 - current_game.player
+            return {"status": "success", "board": current_game.board.to_dict()}
+        else:
+            return {"status": "invalid move"}
 
     def start_game(self):
         global current_game
