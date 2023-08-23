@@ -107,6 +107,7 @@
       board_square.onmousedown = function (e) {
         console.log("Is it your turn?", is_your_turn);
         console.log("Mouse down detected on square:", this.id); // Add this line
+        console.log("Current possible moves at this moment:", current_moves);
         console.log("Current possible moves:", current_moves);
         if (!is_your_turn) return;
 
@@ -131,6 +132,7 @@
       };
       board_square.onmouseup = function (e) {
         console.log("Mouse up detected on square:", this.id); // Add this line
+        console.log("Current possible moves at this moment:", current_moves);
         console.log("Current possible moves:", current_moves);
         if (!is_your_turn) return;
         if (holding == "") return;
@@ -247,6 +249,7 @@
     }
     var update = JSON.parse(updateStr);
     console.log("Update received:", update);
+    console.log("Player value from server:", update.player);
 
     if (!update.moves) {
       console.error("Did not receive valid moves from server.");

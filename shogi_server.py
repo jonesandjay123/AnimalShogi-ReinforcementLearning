@@ -99,7 +99,6 @@ class RequestHandler(BaseHTTPRequestHandler):
         from_pos = query_parameters.get('from')[0]
         to_pos = query_parameters.get('to')[0]
 
-        # 先確定 possible_moves 被正確初始化
         possible_moves = shogi.PossibleMoves(
             current_game.board, current_game.player)
 
@@ -108,15 +107,16 @@ class RequestHandler(BaseHTTPRequestHandler):
 
         if from_pos in possible_moves and to_pos in possible_moves[from_pos]:
             current_game.board = possible_moves[from_pos][to_pos]
-            # 切換到另一位玩家
-            current_game.player = 1 if current_game.player == 2 else 2
+            current_game.player = 1 - current_game.player
             updated_possible_moves = shogi.PossibleMoves(
                 current_game.board, current_game.player)
             return {
                 "status": "success",
                 "board": current_game.board.to_dict(),
                 "moves": updated_possible_moves,
-                "current_player": current_game.player
+                "current_player": current_game.player,
+                "player_id": current_game.player,
+                "player": current_game.player  # 確保這一行存在
             }
         else:
             return {"status": "invalid move"}
