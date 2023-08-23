@@ -297,17 +297,18 @@
     }
 
     var client = new HttpClient();
-    client.get("/move?from=" + from + "&to=" + to, function (response) {
+    client.get("/move?from=" + from + "&to=" + to, function (responseStr) {
+      var response = JSON.parse(responseStr);
       console.log("Received response from server:", response);
       if (response.status === "success") {
-        UpdateGame(response.board);
+        UpdateGame(responseStr); // 更改此行，直接傳遞整個回應字符串
       } else {
-        console.log("Invalid move. Reason:", response.status); // 修改此行以印出具體的原因
+        console.log("Invalid move. Reason:", response.status);
       }
     });
 
     console.log("Sending move request to server...");
-    console.log("Move function end"); // Add this line
+    console.log("Move function end");
   }
 
   function GetArgs() {

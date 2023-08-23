@@ -68,13 +68,23 @@ class RequestHandler(BaseHTTPRequestHandler):
         from_pos = query_parameters.get('from')[0]
         to_pos = query_parameters.get('to')[0]
 
+        # 先確定 possible_moves 被正確初始化
         possible_moves = shogi.PossibleMoves(
             current_game.board, current_game.player)
+
+        print("Received move request from", from_pos, "to", to_pos)
+        print("Current possible moves:", possible_moves)
 
         if from_pos in possible_moves and to_pos in possible_moves[from_pos]:
             current_game.board = possible_moves[from_pos][to_pos]
             current_game.player = 3 - current_game.player
-            return {"status": "success", "board": current_game.board.to_dict()}
+            updated_possible_moves = shogi.PossibleMoves(
+                current_game.board, current_game.player)
+            return {
+                "status": "success",
+                "board": current_game.board.to_dict(),
+                "moves": updated_possible_moves
+            }
         else:
             return {"status": "invalid move"}
 
