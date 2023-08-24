@@ -43,6 +43,7 @@
   }
 
   function CreateBoard() {
+    console.log("Creating board with player value:", player);
     var other_player = 1 - player;
     board_div.innerHTML = "";
     var content = "";
@@ -211,13 +212,16 @@
       var response = JSON.parse(responseStr);
       player_id = response.player_id; // 這一行非常重要
       player = response.player;
+      console.log("Setting player value to:", player, "from server response");
       CreateBoard();
       UpdateGame(responseStr);
     });
   }
 
   function TokenToImage(token) {
-    var up_or_down = token[1] == player ? "up" : "down";
+    console.log("TokenToImage function called with token:", token);
+
+    var up_or_down = token[1] == 0 ? "up" : "down";
     return "/static/img/" + token[0] + "_" + up_or_down + ".png";
   }
 
@@ -233,7 +237,7 @@
   }
 
   function UpdateBoard(new_board) {
-    console.log("Player value when updating board:", player); // Add this line
+    console.log("Updating board with player value:", player);
     board = new_board;
     ClearAllCells();
     Object.keys(board).forEach(function (key) {
@@ -242,13 +246,15 @@
   }
 
   function UpdateGame(updateStr) {
+    console.log("UpdateGame function called with data:", updateStr);
+
     if (updateStr === "{}") {
       var aClient = new HttpClient();
       aClient.get("get_game_status" + GetArgs(), UpdateGame);
       return;
     }
     var update = JSON.parse(updateStr);
-    console.log("Update received:", update);
+    console.log("Received update from server:", update);
     console.log("Player value from server:", update.player);
 
     if (!update.moves) {
@@ -260,7 +266,7 @@
     player = update.player;
     player_id = update.player_id;
 
-    console.log("Setting player value to:", player); // Added debug output
+    console.log("Setting player value to:", player, "from server update");
     console.log("Setting player_id value to:", player_id); // Added debug output
 
     UpdateBoard(update.board);

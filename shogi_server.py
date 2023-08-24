@@ -92,6 +92,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     def handle_move_request(self):
         global current_game
+        print("Before handling move, current player is:", current_game.player)
 
         parsed_path = urllib.parse.urlparse(self.path)
         query_parameters = urllib.parse.parse_qs(parsed_path.query)
@@ -110,6 +111,8 @@ class RequestHandler(BaseHTTPRequestHandler):
             current_game.player = 1 - current_game.player
             updated_possible_moves = shogi.PossibleMoves(
                 current_game.board, current_game.player)
+            print("After handling move, current player is:", current_game.player)
+
             return {
                 "status": "success",
                 "board": current_game.board.to_dict(),
