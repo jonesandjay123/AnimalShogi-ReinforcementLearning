@@ -219,8 +219,6 @@
   }
 
   function TokenToImage(token) {
-    console.log("TokenToImage function called with token:", token);
-
     var up_or_down = token[1] == 0 ? "up" : "down";
     return "/static/img/" + token[0] + "_" + up_or_down + ".png";
   }
