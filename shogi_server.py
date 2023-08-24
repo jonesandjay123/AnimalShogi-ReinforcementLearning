@@ -1,14 +1,10 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-
 import urllib
-
 import shogi
 
 PORT = 8008
-
-# Global variable to keep track of the current game state
-current_game = shogi.Game()
+current_game = shogi.Game()  # Global variable to keep track of the current game state
 
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -49,20 +45,6 @@ class RequestHandler(BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(file.read())
                     return
-            elif self.path.startswith('/wait_for_my_turn'):
-                response = self.wait_for_my_turn()
-                self.send_response(200)
-                self.send_header('Content-Type', 'application/json')
-                self.end_headers()
-                self.wfile.write(json.dumps(response).encode('utf-8'))
-                return
-            elif self.path.startswith('/get_game_status'):
-                response = self.get_game_status()
-                self.send_response(200)
-                self.send_header('Content-Type', 'application/json')
-                self.end_headers()
-                self.wfile.write(json.dumps(response).encode('utf-8'))
-                return
             elif self.path.startswith('/move'):
                 response = self.handle_move_request()
                 self.send_response(200)
@@ -80,19 +62,8 @@ class RequestHandler(BaseHTTPRequestHandler):
         except Exception as e:
             print(f"Error occurred: {e}")
 
-    def wait_for_my_turn(self):
-        # TODO: 這裡應該包含等待其他玩家移動的邏輯。
-        # 現在只是一個簡單的實現，返回一個空字典。
-        return {}
-
-    def get_game_status(self):
-        # TODO: 這裡應該包含返回當前遊戲狀態的邏輯。
-        # 現在只是一個簡單的實現，返回一個空字典。
-        return {}
-
     def handle_move_request(self):
         global current_game
-        print("Before handling move, current player is:", current_game.player)
 
         parsed_path = urllib.parse.urlparse(self.path)
         query_parameters = urllib.parse.parse_qs(parsed_path.query)
@@ -103,15 +74,11 @@ class RequestHandler(BaseHTTPRequestHandler):
         possible_moves = shogi.PossibleMoves(
             current_game.board, current_game.player)
 
-        print("Received move request from", from_pos, "to", to_pos)
-        print("Current possible moves:", possible_moves)
-
         if from_pos in possible_moves and to_pos in possible_moves[from_pos]:
             current_game.board = possible_moves[from_pos][to_pos]
             current_game.player = 1 - current_game.player
             updated_possible_moves = shogi.PossibleMoves(
                 current_game.board, current_game.player)
-            print("After handling move, current player is:", current_game.player)
 
             return {
                 "status": "success",
