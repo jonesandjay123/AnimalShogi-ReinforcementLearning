@@ -35,9 +35,9 @@
     var player_as_str = (parseInt(for_player) + 1).toString();
     var content = "";
     content += "<table id='P" + player_as_str + "Bench'><tr>";
-    content += MakeBoardTD("P" + player_as_str + "B0");
-    content += MakeBoardTD("P" + player_as_str + "B1");
-    content += MakeBoardTD("P" + player_as_str + "B2");
+    for (var i = 0; i < 6; i++) {
+      content += MakeBoardTD("P" + player_as_str + "B" + i);
+    }
     content += "</tr></table>";
     return content;
   }
@@ -224,6 +224,13 @@
   }
 
   function TokenToImgTag(token, id) {
+    console.log(
+      "TokenToImgTag function started with token:",
+      token,
+      "and id:",
+      id
+    );
+
     return (
       "<img draggable=false width=50 height=50 " +
       "src='" +
@@ -235,11 +242,13 @@
   }
 
   function UpdateBoard(new_board) {
-    console.log("Updating board with player value:", player);
+    console.log("UpdateBoard function started with board data:", new_board);
+
     board = new_board;
     ClearAllCells();
     Object.keys(board).forEach(function (key) {
       document.getElementById(key).innerHTML = TokenToImgTag(board[key], key);
+      console.log("Placing token at key:", key, "with data:", board[key]);
     });
   }
 
@@ -305,7 +314,7 @@
   }
 
   function Move(from, to) {
-    console.log("Attempting to move from", from, "to", to);
+    console.log("Move function started with from:", from, "and to:", to);
 
     if (!is_your_turn) {
       console.log("Not your turn!");
