@@ -228,8 +228,16 @@
   }
 
   function TokenToImage(token) {
-    var up_or_down = token[1] == 0 ? "up" : "down";
-    return "/static/img/" + token[0] + "_" + up_or_down + ".png";
+    var up_or_down = token[1] == "0" ? "up" : "down";
+    var pieceMap = {
+      L: "Lion",
+      G: "Giraffe",
+      E: "Elephant",
+      C: "Chick",
+      H: "Hen",
+    };
+    var pieceName = pieceMap[token[0]];
+    return "/static/img/" + pieceName + "_" + up_or_down + ".png";
   }
 
   function TokenToImgTag(token, id) {
