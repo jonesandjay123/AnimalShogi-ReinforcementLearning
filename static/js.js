@@ -16,6 +16,7 @@
   var holding_img = "";
 
   window.onload = Loaded;
+  window.EnterSetupMode = EnterSetupMode;
 
   function Loaded() {
     board_div = document.getElementById("board");
@@ -25,6 +26,9 @@
 
     document.getElementById("start-game").onclick = StartHumanGame;
     document.getElementById("start-ai-game").onclick = StartAIGame;
+    document
+      .getElementById("setup-board")
+      .addEventListener("click", EnterSetupMode);
   }
 
   function MakeBoardTD(id) {
@@ -339,6 +343,87 @@
 
     console.log("Sending move request to server...");
     console.log("Move function end");
+  }
+
+  function ClearBoard() {
+    var board_squares = document.getElementsByClassName("board_square");
+    for (var i = 0; i < board_squares.length; i++) {
+      var board_square = board_squares[i];
+      board_square.innerHTML = "";
+    }
+  }
+
+  // Global variable to store the dragged piece's information
+  var draggedPiece = null;
+
+  function ConvertPieceOnDoubleClick(element) {
+    if (element.id.endsWith("Chick")) {
+      var newPieceType = "Hen";
+      var newPieceID = element.id.replace("Chick", "Hen");
+      element.id = newPieceID;
+      element.innerHTML = pieceRepresentation[element.id[1]][newPieceType];
+    } else if (element.id.endsWith("Hen")) {
+      var newPieceType = "Chick";
+      var newPieceID = element.id.replace("Hen", "Chick");
+      element.id = newPieceID;
+      element.innerHTML = pieceRepresentation[element.id[1]][newPieceType];
+    }
+  }
+
+  function AddDoubleClickEventForSetupMode() {
+    for (var player = 1; player <= 2; player++) {
+      for (var i = 0; i < 4; i++) {
+        var pieceElement = document.getElementById("P" + player + "B" + i);
+        if (pieceElement) {
+          pieceElement.ondblclick = function () {
+            ConvertPieceOnDoubleClick(this);
+          };
+        }
+      }
+    }
+  }
+
+  function PlacePiece(position, pieceHTML) {
+    var targetElement = document.getElementById(position);
+    if (targetElement) {
+      targetElement.innerHTML = pieceHTML;
+    }
+  }
+
+  function MakePiece(player, pieceType, position) {
+    var up_or_down = player == 0 ? "up" : "down";
+    var pieceToken = {
+      Lion: "L",
+      Giraffe: "G",
+      Elephant: "E",
+      Chick: "C",
+      Hen: "H",
+    }[pieceType];
+    var token = pieceToken + player;
+    return TokenToImgTag(token, position);
+  }
+
+  function EnterSetupMode() {
+    ClearBoard();
+    for (var player = 0; player < 2; player++) {
+      PlacePiece(
+        "P" + (player + 1) + "B0",
+        MakePiece(player, "Lion", "P" + (player + 1) + "B0")
+      );
+      PlacePiece(
+        "P" + (player + 1) + "B1",
+        MakePiece(player, "Giraffe", "P" + (player + 1) + "B1")
+      );
+      PlacePiece(
+        "P" + (player + 1) + "B2",
+        MakePiece(player, "Elephant", "P" + (player + 1) + "B2")
+      );
+      PlacePiece(
+        "P" + (player + 1) + "B3",
+        MakePiece(player, "Chick", "P" + (player + 1) + "B3")
+      );
+    }
+    AddDoubleClickEventForSetupMode();
   }
 
   function GetArgs() {
