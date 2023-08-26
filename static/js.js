@@ -81,25 +81,40 @@
   }
 
   function StartHolding(element, evt) {
+    if (!board[element.id]) return; // Add this line to ensure there's a piece on the square.
+
     holding = element.id;
     console.log("Currently holding:", holding);
     holding_img = element.innerHTML;
     element.innerHTML = "";
-    document.getElementById("hidden").innerHTML = TokenToImgTag(
-      board[element.id],
-      "hidden"
-    );
+    if (board[element.id]) {
+      // Check if the board position contains a piece
+      document.getElementById("hidden").innerHTML = TokenToImgTag(
+        board[element.id],
+        "hidden"
+      );
+    }
     UpdateHoldingPos(evt);
+    document.getElementById("hidden").innerHTML = "";
   }
 
   function UpdateHoldingPos(e) {
-    document.getElementById("img-hidden").style.left = e.clientX - 25;
-    document.getElementById("img-hidden").style.top = e.clientY - 25;
+    var imgHiddenElement = document.getElementById("img-hidden");
+    if (imgHiddenElement) {
+      // Ensure the element exists before updating its style
+      imgHiddenElement.style.left = e.clientX - 25 + "px";
+      imgHiddenElement.style.top = e.clientY - 25 + "px";
+    }
   }
 
   function StopHolding() {
+    console.log("StopHolding function called.");
     document.getElementById(holding).innerHTML = holding_img;
     document.getElementById("hidden").innerHTML = "";
+    console.log(
+      "Hidden content after clear:",
+      document.getElementById("hidden").innerHTML
+    ); // 添加這一行
     holding = "";
   }
 
@@ -115,71 +130,53 @@
     for (var i = 0; i < board_squares.length; i++) {
       var board_square = board_squares[i];
       board_square.onmousedown = function (e) {
-        console.log("Is it your turn?", is_your_turn);
-        console.log("Mouse down detected on square:", this.id); // Add this line
-        console.log("Current possible moves at this moment:", current_moves);
-        console.log("Current possible moves:", current_moves);
-        if (!is_your_turn) return;
+        console.log("Mouse down detected on square:", this.id);
 
-        ClearAllBackgrounds();
-        if (clicked_on != "") {
-          console.log("A piece was previously clicked:", clicked_on);
-          var old_clicked_on = clicked_on;
-          clicked_on = "";
-          if (this.id in current_moves[old_clicked_on]) {
-            Move(old_clicked_on, this.id);
-            return;
-          } else {
-            console.log("Invalid move from", clicked_on, "to", this.id);
-          }
-        }
-        this.style.backgroundColor = "orange";
-        if (!(this.id in current_moves)) {
+        if (holding) {
+          document.getElementById(holding).innerHTML = holding_img;
+          holding = "";
+          holding_img = "";
           return;
         }
-        StartHolding(this, e);
-        ColourPossibleMoves(this.id);
+
+        if (this.innerHTML != "") {
+          StartHolding(this, e);
+        }
       };
+
       board_square.onmouseup = function (e) {
-        console.log("Mouse up detected on square:", this.id); // Add this line
-        console.log("Current possible moves at this moment:", current_moves);
-        console.log("Current possible moves:", current_moves);
-        if (!is_your_turn) return;
-        if (holding == "") return;
-
-        var was_holding = holding;
-        StopHolding();
-
-        if (this.id == was_holding) {
-          clicked_on = this.id;
-          return;
-        }
-
-        ClearAllBackgrounds();
-        if (this.id in current_moves[was_holding]) {
-          Move(was_holding, this.id);
-          return;
+        console.log("Mouse up detected on square:", this.id);
+        if (holding) {
+          if (this.innerHTML == "") {
+            this.innerHTML = holding_img;
+            document.getElementById(holding).innerHTML = "";
+          }
+          holding = "";
+          holding_img = "";
         }
       };
+
       board_square.onmouseenter = function (e) {
-        if (holding == "") return;
-        if (this.id in current_moves[holding]) {
+        if (holding) {
           this.style.backgroundColor = "orange";
         }
       };
+
       board_square.onmouseleave = function (e) {
-        if (holding == "") return;
-        if (this.id in current_moves[holding]) {
-          this.style.backgroundColor = "yellow";
+        if (holding) {
+          this.style.backgroundColor = "";
         }
       };
     }
+
     document.body.onmousemove = function (e) {
       if (holding !== "") {
         UpdateHoldingPos(e);
       }
     };
+
     document.body.onmouseup = function (e) {
+      console.log("Mouse up event detected on the document body.");
       if (holding !== "") {
         StopHolding();
       }
@@ -395,6 +392,13 @@
     var targetElement = document.getElementById(position);
     if (targetElement) {
       targetElement.innerHTML = pieceHTML;
+
+      // Extract the piece token from the pieceHTML and update the board object
+      var regex = /img\/(.+?)\.png/;
+      var match = pieceHTML.match(regex);
+      if (match && match[1]) {
+        board[position] = match[1][0] + (match[1].endsWith("up") ? "0" : "1");
+      }
     }
   }
 
@@ -412,6 +416,7 @@
   }
 
   function EnterSetupMode() {
+    board = {}; // Add this line to initialize the board object.
     ClearBoard();
     for (var player = 0; player < 2; player++) {
       PlacePiece(
