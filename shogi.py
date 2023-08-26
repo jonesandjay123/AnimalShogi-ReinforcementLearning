@@ -17,8 +17,8 @@ LION = "lion"
 PLAYER1 = 0
 PLAYER2 = 1
 
-_PLAYER1BENCH = ["P1B" + str(i) for i in range(3)]
-_PLAYER2BENCH = ["P2B" + str(i) for i in range(3)]
+_PLAYER1BENCH = ["P1B" + str(i) for i in range(6)]
+_PLAYER2BENCH = ["P2B" + str(i) for i in range(6)]
 
 Token = namedtuple('Token', ['piece', 'owner'])
 ExpandedPoint = namedtuple('ExpandedPoint', ['x', 'y'])

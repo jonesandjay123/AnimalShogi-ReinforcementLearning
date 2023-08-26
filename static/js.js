@@ -34,11 +34,16 @@
   function MakeBench(for_player) {
     var player_as_str = (parseInt(for_player) + 1).toString();
     var content = "";
-    content += "<table id='P" + player_as_str + "Bench'><tr>";
-    for (var i = 0; i < 6; i++) {
-      content += MakeBoardTD("P" + player_as_str + "B" + i);
+    content += "<table id='P" + player_as_str + "Bench'>";
+    for (var row = 0; row < 2; row++) {
+      content += "<tr>";
+      for (var col = 0; col < 3; col++) {
+        var index = row * 3 + col;
+        content += MakeBoardTD("P" + player_as_str + "B" + index);
+      }
+      content += "</tr>";
     }
-    content += "</tr></table>";
+    content += "</table>";
     return content;
   }
 
