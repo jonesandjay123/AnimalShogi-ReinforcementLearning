@@ -149,12 +149,32 @@
         if (holding) {
           if (this.innerHTML == "") {
             this.innerHTML = holding_img;
+
+            // Check if the placement is on the opponent's territory and flip the piece.
+            var pieceImg = this.querySelector("img");
+            if (IsOnOpponentTerritory(this.id)) {
+              if (pieceImg.src.includes("_up.png")) {
+                pieceImg.src = pieceImg.src.replace("_up.png", "_down.png");
+              } else if (pieceImg.src.includes("_down.png")) {
+                pieceImg.src = pieceImg.src.replace("_down.png", "_up.png");
+              }
+            }
+
             document.getElementById(holding).innerHTML = "";
           }
           holding = "";
           holding_img = "";
         }
       };
+
+      function IsOnOpponentTerritory(squareId) {
+        if (player === 0 && parseInt(squareId[1]) >= 2) {
+          return true;
+        } else if (player === 1 && parseInt(squareId[1]) <= 1) {
+          return true;
+        }
+        return false;
+      }
 
       board_square.onmouseenter = function (e) {
         if (holding) {
