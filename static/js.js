@@ -152,7 +152,7 @@
 
             // Check if the placement is on the opponent's territory and flip the piece.
             var pieceImg = this.querySelector("img");
-            if (IsOnOpponentTerritory(this.id)) {
+            if (IsOnOpponentTerritory(holding, this.id)) {
               if (pieceImg.src.includes("_up.png")) {
                 pieceImg.src = pieceImg.src.replace("_up.png", "_down.png");
               } else if (pieceImg.src.includes("_down.png")) {
@@ -167,13 +167,35 @@
         }
       };
 
-      function IsOnOpponentTerritory(squareId) {
-        if (player === 0 && parseInt(squareId[1]) >= 2) {
+      function IsOnOpponentTerritory(holdingSquareId, targetSquareId) {
+        var holdingPlayer = holdingSquareId[1];
+        if (
+          player === 0 &&
+          parseInt(targetSquareId[1]) >= 2 &&
+          holdingPlayer === "1"
+        ) {
           return true;
-        } else if (player === 1 && parseInt(squareId[1]) <= 1) {
+        } else if (
+          player === 1 &&
+          parseInt(targetSquareId[1]) <= 1 &&
+          holdingPlayer === "2"
+        ) {
           return true;
         }
         return false;
+      }
+
+      function ConvertPieceOnDoubleClick(element) {
+        var imgElement = element.querySelector("img");
+        if (!imgElement) return; // Ensure there's an image inside the element.
+
+        if (imgElement.src.includes("Chick")) {
+          imgElement.src = imgElement.src.replace("Chick", "Hen");
+          board[element.id] = board[element.id].replace("C", "H");
+        } else if (imgElement.src.includes("Hen")) {
+          imgElement.src = imgElement.src.replace("Hen", "Chick");
+          board[element.id] = board[element.id].replace("H", "C");
+        }
       }
 
       board_square.onmouseenter = function (e) {
@@ -382,16 +404,13 @@
   var draggedPiece = null;
 
   function ConvertPieceOnDoubleClick(element) {
-    if (element.id.endsWith("Chick")) {
-      var newPieceType = "Hen";
-      var newPieceID = element.id.replace("Chick", "Hen");
-      element.id = newPieceID;
-      element.innerHTML = pieceRepresentation[element.id[1]][newPieceType];
-    } else if (element.id.endsWith("Hen")) {
-      var newPieceType = "Chick";
-      var newPieceID = element.id.replace("Hen", "Chick");
-      element.id = newPieceID;
-      element.innerHTML = pieceRepresentation[element.id[1]][newPieceType];
+    var imgElement = element.querySelector("img");
+    if (!imgElement) return; // Ensure there's an image inside the element.
+
+    if (imgElement.src.includes("Chick")) {
+      imgElement.src = imgElement.src.replace("Chick", "Hen");
+    } else if (imgElement.src.includes("Hen")) {
+      imgElement.src = imgElement.src.replace("Hen", "Chick");
     }
   }
 
