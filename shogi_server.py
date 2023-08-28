@@ -17,7 +17,6 @@ class RequestHandler(BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(file.read().encode('utf-8'))
                     return
-            # elif self.path in ['/lib.js', '/js.js', '/style.css']:
             elif self.path in ['/lib.js', '/init_game.js', '/board_operations.js', '/player_interactions.js', '/style.css']:
                 file_path = 'static' + self.path
                 with open(file_path, 'r') as file:

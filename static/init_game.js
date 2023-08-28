@@ -15,7 +15,7 @@ var holding = "";
 var holding_img = "";
 
 window.onload = Loaded;
-window.EnterSetupMode = EnterSetupMode;
+
 function Loaded() {
   board_div = document.getElementById("board");
   status_span = document.getElementById("turn");
@@ -24,9 +24,6 @@ function Loaded() {
 
   document.getElementById("start-game").onclick = StartHumanGame;
   document.getElementById("start-ai-game").onclick = StartAIGame;
-  document
-    .getElementById("setup-board")
-    .addEventListener("click", EnterSetupMode);
 }
 function CreateBoard() {
   console.log("Creating board with player value:", player);
@@ -74,36 +71,6 @@ function StartGame(url) {
     CreateBoard();
     UpdateGame(responseStr);
   });
-}
-function ClearBoard() {
-  var board_squares = document.getElementsByClassName("board_square");
-  for (var i = 0; i < board_squares.length; i++) {
-    var board_square = board_squares[i];
-    board_square.innerHTML = "";
-  }
-}
-function EnterSetupMode() {
-  board = {}; // Add this line to initialize the board object.
-  ClearBoard();
-  for (var player = 0; player < 2; player++) {
-    PlacePiece(
-      "P" + (player + 1) + "B0",
-      MakePiece(player, "Lion", "P" + (player + 1) + "B0")
-    );
-    PlacePiece(
-      "P" + (player + 1) + "B1",
-      MakePiece(player, "Giraffe", "P" + (player + 1) + "B1")
-    );
-    PlacePiece(
-      "P" + (player + 1) + "B2",
-      MakePiece(player, "Elephant", "P" + (player + 1) + "B2")
-    );
-    PlacePiece(
-      "P" + (player + 1) + "B3",
-      MakePiece(player, "Chick", "P" + (player + 1) + "B3")
-    );
-  }
-  AddDoubleClickEventForSetupMode();
 }
 function GetArgs() {
   return "?player=" + player_id;
