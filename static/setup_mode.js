@@ -23,7 +23,7 @@ function MakeSetupBench() {
 
   var pieces = ["lion", "elephant", "giraffe", "chick"];
   for (var player = 0; player <= 1; player++) {
-    var orientation = player == 0 ? "down" : "up"; // 調整方向
+    var orientation = player == 0 ? "up" : "down"; // 調整方向
     for (var i = 0; i < pieces.length; i++) {
       var piece = pieces[i];
       var imgSrc = "/static/img/" + piece + "_" + orientation + ".png";
