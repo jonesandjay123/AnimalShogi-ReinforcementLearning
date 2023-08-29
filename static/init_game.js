@@ -24,8 +24,14 @@ function Loaded() {
 
   document.getElementById("start-game").onclick = StartHumanGame;
   document.getElementById("start-ai-game").onclick = StartAIGame;
+  document.getElementById("setup-board").onclick = onSetupBoardButtonClick;
 }
 function CreateBoard() {
+  console.log("isSetupMode:", isSetupMode);
+  if (isSetupMode) {
+    // ... Code for setup mode ...
+    return;
+  }
   console.log("Creating board with player value:", player);
   var other_player = 1 - player;
   board_div.innerHTML = "";
@@ -71,6 +77,13 @@ function StartGame(url) {
     CreateBoard();
     UpdateGame(responseStr);
   });
+}
+function onSetupBoardButtonClick() {
+  console.log("Setup board button clicked");
+  isSetupMode = true;
+  MakeSetupBench(); // For player 1 (Note: player indexes are 0 and 1)
+  CreateBoard(); // Update the board for setup mode
+  // ... Other necessary operations ...
 }
 function GetArgs() {
   return "?player=" + player_id;
