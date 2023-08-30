@@ -172,8 +172,12 @@ function startGameAsPlayer(playerIndex) {
   // 2. 移除按鈕
   var startBtnP1 = document.getElementById("startBtnP1");
   var startBtnP2 = document.getElementById("startBtnP2");
-  startBtnP1.parentNode.removeChild(startBtnP1);
-  startBtnP2.parentNode.removeChild(startBtnP2);
+  if (startBtnP1 && startBtnP1.parentNode) {
+    startBtnP1.parentNode.removeChild(startBtnP1);
+  }
+  if (startBtnP2 && startBtnP2.parentNode) {
+    startBtnP2.parentNode.removeChild(startBtnP2);
+  }
 
   // 3. 初始化遊戲狀態
   var currentPlayer = playerIndex; // 0 for Player 1 and 1 for Player 2
@@ -183,8 +187,26 @@ function startGameAsPlayer(playerIndex) {
 }
 
 function enableGameInteractions(currentPlayer) {
-  // 這裡你可以啟用所有與遊戲互動相關的功能，
-  // 如根據當前玩家顯示可能的移動、處理玩家的移動、檢查遊戲是否結束等。
+  // 1. 取得棋盤上的棋子位置
+  var boardState = {};
+  var cells = board_div.querySelectorAll("#main-board td");
+  cells.forEach(function (cell) {
+    var pieceImg = cell.querySelector("img");
+    if (pieceImg) {
+      boardState[cell.id] = [pieceImg.id.split("-")[0], currentPlayer];
+    }
+  });
+
+  // 2. 設置遊戲的其他狀態
+  player_id = currentPlayer;
+  player = currentPlayer;
+  is_your_turn = currentPlayer === 0; // 假設玩家1總是先開始
+  board = boardState;
+  // TODO: 計算可能的移動（可能需要與伺服器或其他 JS 函數互動）
+
+  // 3. 啟動遊戲
+  CreateBoard();
+  AddMoveEventListeners();
 }
 
 // 一旦棋盤和棋子被創建，調用以啟用拖放功能
