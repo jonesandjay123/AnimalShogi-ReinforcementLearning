@@ -53,6 +53,19 @@ function changePieceOwnership(piece) {
   piece.id = piece.id.replace(orientation, newOrientation);
 }
 
+function toggleChickTransformation(piece) {
+  var orientation = piece.id.split("-")[1];
+  if (piece.id === "chick-" + orientation) {
+    console.log("Transforming chick to chicken");
+    piece.src = "/static/img/chicken_" + orientation + ".png";
+    piece.id = "chicken-" + orientation;
+  } else if (piece.id === "chicken-" + orientation) {
+    console.log("Transforming chicken back to chick");
+    piece.src = "/static/img/chick_" + orientation + ".png";
+    piece.id = "chick-" + orientation;
+  }
+}
+
 function enableDragAndDrop() {
   var pieces = document.querySelectorAll(
     "#main-board img, #P1Bench img, #P2Bench img"
@@ -91,6 +104,17 @@ function enableDragAndDrop() {
         }
       }
     });
+  });
+
+  // 對於每一個棋子，添加雙擊事件
+  board_div.addEventListener("dblclick", function (event) {
+    console.log("Double clicked on:", event.target.id); // ADD THIS LINE
+    if (event.target.tagName.toLowerCase() === "img") {
+      var piece = event.target;
+      if (piece.id.startsWith("chick") || piece.id.startsWith("chicken")) {
+        toggleChickTransformation(piece);
+      }
+    }
   });
 }
 
