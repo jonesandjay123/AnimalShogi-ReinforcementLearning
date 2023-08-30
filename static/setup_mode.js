@@ -45,6 +45,14 @@ function MakeSetupBench() {
   enableDragAndDrop();
 }
 
+function changePieceOwnership(piece) {
+  var orientation = piece.id.split("-")[1];
+  var newOrientation = orientation === "up" ? "down" : "up";
+  var newImgSrc = piece.src.replace(orientation, newOrientation);
+  piece.src = newImgSrc;
+  piece.id = piece.id.replace(orientation, newOrientation);
+}
+
 function enableDragAndDrop() {
   var pieces = document.querySelectorAll(
     "#main-board img, #P1Bench img, #P2Bench img"
@@ -75,6 +83,12 @@ function enableDragAndDrop() {
       if (cell.innerHTML === "") {
         // 確保目標位置是空的
         cell.appendChild(piece); // 把棋子放到新的位置
+        if (
+          (cell.id.startsWith("P1B") && pieceId.endsWith("down")) ||
+          (cell.id.startsWith("P2B") && pieceId.endsWith("up"))
+        ) {
+          changePieceOwnership(piece);
+        }
       }
     });
   });
