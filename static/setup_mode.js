@@ -46,6 +46,12 @@ function MakeSetupBench() {
 }
 
 function changePieceOwnership(piece) {
+  // 如果棋子是獅子，則不允許轉換陣營
+  if (piece.id.startsWith("lion")) {
+    console.log("Lions cannot change teams.");
+    return; // 退出函數，不進行轉換
+  }
+
   var orientation = piece.id.split("-")[1];
   var newOrientation = orientation === "up" ? "down" : "up";
   var newImgSrc = piece.src.replace(orientation, newOrientation);
