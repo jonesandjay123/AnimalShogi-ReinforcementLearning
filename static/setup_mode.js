@@ -21,7 +21,7 @@ function MakeSetupBench() {
   clearBoard();
   console.log("MakeSetupBench function called");
 
-  var pieces = ["lion", "elephant", "giraffe", "chick"];
+  var pieces = ["elephant", "chick", "giraffe", "lion"];
   for (var player = 0; player <= 1; player++) {
     var orientation = player == 0 ? "up" : "down"; // 調整方向
     for (var i = 0; i < pieces.length; i++) {
@@ -103,6 +103,8 @@ function enableDragAndDrop() {
           changePieceOwnership(piece);
         }
       }
+      // 檢查是否滿足顯示按鈕的條件
+      displayGameStartButtons();
     });
   });
 
@@ -116,6 +118,38 @@ function enableDragAndDrop() {
       }
     }
   });
+}
+
+function checkForTwoLions() {
+  var mainBoard = document.getElementById("main-board");
+  var lions = mainBoard.querySelectorAll("img[id^='lion-']");
+  return lions.length === 2;
+}
+
+function displayGameStartButtons() {
+  var board = document.getElementById("board");
+  var startBtnP1 =
+    document.getElementById("startBtnP1") || document.createElement("button");
+  var startBtnP2 =
+    document.getElementById("startBtnP2") || document.createElement("button");
+
+  if (checkForTwoLions()) {
+    startBtnP1.innerText = "Start as Player 1";
+    startBtnP1.id = "startBtnP1";
+    startBtnP1.style.display = ""; // 顯示按鈕
+    board.appendChild(startBtnP1);
+
+    startBtnP2.innerText = "Start as Player 2";
+    startBtnP2.id = "startBtnP2";
+    startBtnP2.style.display = ""; // 顯示按鈕
+    board.appendChild(startBtnP2);
+  } else {
+    // 如果沒有兩隻獅子，則隱藏按鈕
+    if (startBtnP1.parentElement) startBtnP1.style.display = "none";
+    if (startBtnP2.parentElement) startBtnP2.style.display = "none";
+  }
+
+  // ... 其他代碼 ...
 }
 
 // 一旦棋盤和棋子被創建，調用以啟用拖放功能
