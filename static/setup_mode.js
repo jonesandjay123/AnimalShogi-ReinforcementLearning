@@ -31,10 +31,54 @@ function MakeSetupBench() {
       var cell = document.getElementById(cellId);
       if (cell) {
         cell.innerHTML =
-          "<img src='" + imgSrc + "' draggable='true' width='50' height='50'>";
+          "<img id='" +
+          piece +
+          "-" +
+          orientation +
+          "' src='" +
+          imgSrc +
+          "' draggable='true' width='50' height='50'>";
       }
     }
   }
+  // 設置棋子可拖放
+  enableDragAndDrop();
 }
 
-// ... Additional functions related to "Setup Board" mode ...
+function enableDragAndDrop() {
+  var pieces = document.querySelectorAll(
+    "#main-board img, #P1Bench img, #P2Bench img"
+  );
+
+  // 使棋子可拖動
+  pieces.forEach(function (piece) {
+    piece.addEventListener("dragstart", function (event) {
+      event.dataTransfer.setData("text/plain", event.target.id); // 儲存被拖動的棋子的ID
+    });
+  });
+
+  var cells = document.querySelectorAll(
+    "#main-board td, #P1Bench td, #P2Bench td"
+  );
+
+  // 設置拖放的目標
+  cells.forEach(function (cell) {
+    cell.addEventListener("dragover", function (event) {
+      event.preventDefault(); // 防止默認行為
+    });
+
+    cell.addEventListener("drop", function (event) {
+      event.preventDefault(); // 防止默認行為
+      var pieceId = event.dataTransfer.getData("text/plain");
+      var piece = document.getElementById(pieceId);
+
+      if (cell.innerHTML === "") {
+        // 確保目標位置是空的
+        cell.appendChild(piece); // 把棋子放到新的位置
+      }
+    });
+  });
+}
+
+// 一旦棋盤和棋子被創建，調用以啟用拖放功能
+MakeSetupBench();
