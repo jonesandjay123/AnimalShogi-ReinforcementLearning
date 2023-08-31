@@ -28,13 +28,15 @@ function MakeSetupBench() {
       var piece = pieces[i];
       var imgSrc = "/static/img/" + piece + "_" + orientation + ".png";
       var cellId = "P" + (player + 1) + "B" + i;
+
+      // Generate a unique ID for each piece
+      var pieceUniqueId = piece + "-" + orientation + "-" + i + "-" + player;
+
       var cell = document.getElementById(cellId);
       if (cell) {
         cell.innerHTML =
           "<img id='" +
-          piece +
-          "-" +
-          orientation +
+          pieceUniqueId +
           "' src='" +
           imgSrc +
           "' draggable='true' width='50' height='50'>";
@@ -52,23 +54,29 @@ function changePieceOwnership(piece) {
     return; // 退出函數，不進行轉換
   }
 
-  var orientation = piece.id.split("-")[1];
+  var idComponents = piece.id.split("-");
+  var orientation = idComponents[1];
   var newOrientation = orientation === "up" ? "down" : "up";
   var newImgSrc = piece.src.replace(orientation, newOrientation);
+  idComponents[1] = newOrientation;
+
   piece.src = newImgSrc;
-  piece.id = piece.id.replace(orientation, newOrientation);
+  piece.id = idComponents.join("-");
 }
 
 function toggleChickTransformation(piece) {
-  var orientation = piece.id.split("-")[1];
-  if (piece.id === "chick-" + orientation) {
+  var idComponents = piece.id.split("-");
+  var pieceType = idComponents[0];
+  var orientation = idComponents[1];
+
+  if (pieceType === "chick") {
     console.log("Transforming chick to chicken");
     piece.src = "/static/img/chicken_" + orientation + ".png";
-    piece.id = "chicken-" + orientation;
-  } else if (piece.id === "chicken-" + orientation) {
+    piece.id = "chicken-" + idComponents.slice(1).join("-");
+  } else if (pieceType === "chicken") {
     console.log("Transforming chicken back to chick");
     piece.src = "/static/img/chick_" + orientation + ".png";
-    piece.id = "chick-" + orientation;
+    piece.id = "chick-" + idComponents.slice(1).join("-");
   }
 }
 
@@ -95,17 +103,20 @@ function enableDragAndDrop() {
     });
 
     cell.addEventListener("drop", function (event) {
+      console.log("Drop event triggered for cell:", cell.id); // ADD THIS LINE
       event.preventDefault(); // 防止默認行為
       var pieceId = event.dataTransfer.getData("text/plain");
       var piece = document.getElementById(pieceId);
-
+      console.log("Piece ID on drop:", pieceId);
       if (cell.innerHTML === "") {
         // 確保目標位置是空的
         cell.appendChild(piece); // 把棋子放到新的位置
-        if (
-          (cell.id.startsWith("P1B") && pieceId.endsWith("down")) ||
-          (cell.id.startsWith("P2B") && pieceId.endsWith("up"))
-        ) {
+
+        if (cell.id.startsWith("P1B") && piece.id.includes("-down")) {
+          console.log("Changing ownership for P1B and piece ending with -down");
+          changePieceOwnership(piece);
+        } else if (cell.id.startsWith("P2B") && piece.id.includes("-up")) {
+          console.log("Changing ownership for P2B and piece ending with -up");
           changePieceOwnership(piece);
         }
       }
@@ -116,7 +127,7 @@ function enableDragAndDrop() {
 
   // 對於每一個棋子，添加雙擊事件
   board_div.addEventListener("dblclick", function (event) {
-    console.log("Double clicked on:", event.target.id); // ADD THIS LINE
+    console.log("Double clicked on:", event.target.id);
     if (event.target.tagName.toLowerCase() === "img") {
       var piece = event.target;
       if (piece.id.startsWith("chick") || piece.id.startsWith("chicken")) {
