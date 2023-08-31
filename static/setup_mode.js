@@ -197,6 +197,8 @@ function enableGameInteractions(currentPlayer) {
     }
   });
 
+  console.log("Current board state before creating board:", boardState); // 查看當前棋盤狀態
+
   // 2. 設置遊戲的其他狀態
   player_id = currentPlayer;
   player = currentPlayer;
@@ -205,8 +207,55 @@ function enableGameInteractions(currentPlayer) {
   // TODO: 計算可能的移動（可能需要與伺服器或其他 JS 函數互動）
 
   // 3. 啟動遊戲
-  CreateBoard();
+  CreateCustomBoard();
+
+  console.log("Board after calling CreateBoard():", board_div.innerHTML); // 查看重新創建棋盤後的狀態
+
   AddMoveEventListeners();
+}
+
+function CreateCustomBoard() {
+  console.log("Enter CreateCustomBoard");
+  console.log("Creating custom board with player value:", player);
+
+  // 清空當前棋盤的內容
+  board_div.innerHTML = "";
+
+  var content = "";
+  content += MakeBench(1 - player); // 對手的棋子座位
+
+  content += "<table id='main-board'>";
+  for (var y = 0; y < _HEIGHT; y++) {
+    content += "<tr>";
+    for (var x = 0; x < _WIDTH; x++) {
+      var x_to_use = x;
+      var y_to_use = y;
+      if (player == 0) {
+        y_to_use = _HEIGHT - y - 1;
+      } else {
+        x_to_use = _WIDTH - x - 1;
+      }
+
+      var cellId = x_to_use.toString() + y_to_use.toString();
+      var pieceData = board[cellId];
+      if (pieceData) {
+        var imgSrc = TokenToImage(pieceData);
+        content += `<td class='board_square' id='${cellId}'><img src='${imgSrc}' width='50' height='50' id='${pieceData[0]}-${pieceData[1]}'></td>`;
+      } else {
+        content += MakeBoardTD(cellId);
+      }
+    }
+    content += "</tr>";
+  }
+  content += "</table>";
+
+  content += MakeBench(player); // 玩家自己的棋子座位
+
+  board_div.innerHTML = content;
+  ClearAllBackgrounds();
+
+  AddMoveEventListeners();
+  console.log("Exit CreateCustomBoard");
 }
 
 // 一旦棋盤和棋子被創建，調用以啟用拖放功能
