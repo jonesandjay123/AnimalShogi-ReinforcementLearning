@@ -204,10 +204,12 @@ function startGameAsPlayer(playerIndex) {
         startBtnP2.parentNode.removeChild(startBtnP2);
       }
 
-      // 3. 初始化遊戲狀態，使用後端返回的遊戲資訊
-      var currentPlayer = data.player; // 0 for Player 1 and 1 for Player 2
+      // 3. 使用伺服器返回的遊戲資訊更新遊戲狀態
+      player = data.player;
+      player_id = data.player_id;
 
-      // TODO: 使用返回的遊戲資訊來更新棋盤、顯示可能的移動等。
+      // 4. 更新棋盤和遊戲狀態。
+      // 5. 啟動遊戲循環。
     })
     .catch((error) => {
       console.error("Error:", error);
