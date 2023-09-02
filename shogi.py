@@ -50,6 +50,9 @@ def FromExpandedPoint(expanded_point):
 
 
 class Board(dict):
+    def __init__(self, custom_board=None):
+        if custom_board:
+            self.board = custom_board
 
     def __hash__(self):
         return hash(''.join(self.get(pos, ' ')[0] for pos in _ORDER))
@@ -71,10 +74,11 @@ class PlayerStatus:
 
 class Game(object):
 
-    def __init__(self):
+    def __init__(self, custom_board=None):
         self.player = random.choice([PLAYER1, PLAYER2])
         self.history = []
         self.count = Counter()
+        self.board = Board(custom_board=custom_board)
 
         self.status = {}
         self.is_over = False
@@ -148,7 +152,8 @@ def SetToken(board, piece, owner, pos):
 
 
 def ClearToken(board, pos):
-    del board[pos]
+    if pos in board:
+        del board[pos]
 
 
 def IsOwnedBy(board, owner, pos):

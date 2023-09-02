@@ -177,29 +177,41 @@ function displayGameStartButtons() {
 }
 
 function startGameAsPlayer(playerIndex) {
-  // 1. 設定遊戲模式
-  isSetupMode = false;
+  let boardState = getCurrentCompleteBoardState();
 
-  // 2. 移除按鈕
-  var startBtnP1 = document.getElementById("startBtnP1");
-  var startBtnP2 = document.getElementById("startBtnP2");
-  if (startBtnP1 && startBtnP1.parentNode) {
-    startBtnP1.parentNode.removeChild(startBtnP1);
-  }
-  if (startBtnP2 && startBtnP2.parentNode) {
-    startBtnP2.parentNode.removeChild(startBtnP2);
-  }
+  fetch("/start_custom_game", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      board_state: boardState,
+      player: playerIndex,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // 1. 設定遊戲模式
+      isSetupMode = false;
 
-  // 3. 初始化遊戲狀態
-  var currentPlayer = playerIndex; // 0 for Player 1 and 1 for Player 2
+      // 2. 移除按鈕
+      var startBtnP1 = document.getElementById("startBtnP1");
+      var startBtnP2 = document.getElementById("startBtnP2");
+      if (startBtnP1 && startBtnP1.parentNode) {
+        startBtnP1.parentNode.removeChild(startBtnP1);
+      }
+      if (startBtnP2 && startBtnP2.parentNode) {
+        startBtnP2.parentNode.removeChild(startBtnP2);
+      }
 
-  // 4. 啟用遊戲互動
-  enableGameInteractions(currentPlayer);
-}
+      // 3. 初始化遊戲狀態，使用後端返回的遊戲資訊
+      var currentPlayer = data.player; // 0 for Player 1 and 1 for Player 2
 
-function enableGameInteractions(currentPlayer) {
-  // 最後，為了驗證，我們可以打印出完整的棋盤狀態
-  console.log("Complete board state:", getCurrentCompleteBoardState());
+      // TODO: 使用返回的遊戲資訊來更新棋盤、顯示可能的移動等。
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
 }
 
 function getCurrentBoardState() {

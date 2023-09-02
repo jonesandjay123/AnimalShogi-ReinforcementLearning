@@ -62,6 +62,20 @@ class RequestHandler(BaseHTTPRequestHandler):
         except Exception as e:
             print(f"Error occurred: {e}")
 
+    def do_POST(self):
+        if self.path == '/start_custom_game':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data)
+            board_state = data['board_state']
+            current_player = data.get('current_player', 0)
+
+            response = self.start_custom_game(board_state, current_player)
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps(response).encode('utf-8'))
+
     def handle_move_request(self):
         global current_game
 
@@ -106,6 +120,24 @@ class RequestHandler(BaseHTTPRequestHandler):
             'player': current_game.player,
             'player_id': current_game.player,
             'current_player': current_game.player  # 確保player1始終先手
+        }
+
+    def start_custom_game(self, board_state, current_player=0):
+        global current_game
+
+        current_game = shogi.Game(board_state)  # 使用提供的棋盤狀態初始化遊戲
+        current_game.player = current_player  # 使用提供的玩家設置當前玩家
+        board_dict = current_game.board.to_dict()
+        possible_moves = shogi.PossibleMoves(
+            current_game.board, current_game.player)
+
+        return {
+            'board': board_dict,
+            'moves': possible_moves,
+            'status': 'started',
+            'player': current_game.player,
+            'player_id': current_game.player,
+            'current_player': current_game.player
         }
 
 
