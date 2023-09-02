@@ -198,75 +198,57 @@ function startGameAsPlayer(playerIndex) {
 }
 
 function enableGameInteractions(currentPlayer) {
-  // 1. 取得棋盤上的棋子位置
-  var boardState = {};
-  var cells = board_div.querySelectorAll("#main-board td");
-  cells.forEach(function (cell) {
-    var pieceImg = cell.querySelector("img");
-    if (pieceImg) {
-      boardState[cell.id] = [pieceImg.id.split("-")[0], currentPlayer];
+  // 最後，為了驗證，我們可以打印出完整的棋盤狀態
+  console.log("Complete board state:", getCurrentCompleteBoardState());
+}
+
+function getCurrentBoardState() {
+  let boardState = {};
+
+  // 從主棋盤獲取棋子狀態
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 3; col++) {
+      let cellId = `${col}${row}`;
+      let cellElement = document.getElementById(cellId);
+      let imgElement = cellElement.querySelector("img");
+
+      if (imgElement) {
+        let [pieceType, direction, , player] = imgElement.id.split("-");
+        boardState[cellId] = [pieceType, parseInt(player)];
+      }
+    }
+  }
+
+  console.log("Current board state:", boardState);
+  return boardState;
+}
+
+function getBenchState(player) {
+  let benchID = player === 0 ? "P1Bench" : "P2Bench";
+  let benchState = {};
+
+  // 擷取bench上的每一個位置的棋子
+  let benchSquares = document.querySelectorAll("#" + benchID + " td");
+  benchSquares.forEach(function (square, index) {
+    let imgElement = square.querySelector("img");
+    if (imgElement) {
+      let idParts = imgElement.id.split("-");
+      let pieceName = idParts[0];
+      let piecePlayer = parseInt(idParts[2]);
+      benchState["P" + (player + 1) + "B" + index] = [pieceName, piecePlayer];
     }
   });
 
-  console.log("Current board state before creating board:", boardState); // 查看當前棋盤狀態
-
-  // 2. 設置遊戲的其他狀態
-  player_id = currentPlayer;
-  player = currentPlayer;
-  is_your_turn = currentPlayer === 0; // 假設玩家1總是先開始
-  board = boardState;
-  // TODO: 計算可能的移動（可能需要與伺服器或其他 JS 函數互動）
-
-  // 3. 啟動遊戲
-  CreateCustomBoard();
-
-  console.log("Board after calling CreateBoard():", board_div.innerHTML); // 查看重新創建棋盤後的狀態
-
-  AddMoveEventListeners();
+  return benchState;
 }
 
-function CreateCustomBoard() {
-  console.log("Enter CreateCustomBoard");
-  console.log("Creating custom board with player value:", player);
+// 現在，我們可以結合主棋盤和bench的狀態來得到完整的棋盤狀態
+function getCurrentCompleteBoardState() {
+  let mainBoardState = getCurrentBoardState();
+  let player1BenchState = getBenchState(0);
+  let player2BenchState = getBenchState(1);
 
-  // 清空當前棋盤的內容
-  board_div.innerHTML = "";
-
-  var content = "";
-  content += MakeBench(1 - player); // 對手的棋子座位
-
-  content += "<table id='main-board'>";
-  for (var y = 0; y < _HEIGHT; y++) {
-    content += "<tr>";
-    for (var x = 0; x < _WIDTH; x++) {
-      var x_to_use = x;
-      var y_to_use = y;
-      if (player == 0) {
-        y_to_use = _HEIGHT - y - 1;
-      } else {
-        x_to_use = _WIDTH - x - 1;
-      }
-
-      var cellId = x_to_use.toString() + y_to_use.toString();
-      var pieceData = board[cellId];
-      if (pieceData) {
-        var imgSrc = TokenToImage(pieceData);
-        content += `<td class='board_square' id='${cellId}'><img src='${imgSrc}' width='50' height='50' id='${pieceData[0]}-${pieceData[1]}'></td>`;
-      } else {
-        content += MakeBoardTD(cellId);
-      }
-    }
-    content += "</tr>";
-  }
-  content += "</table>";
-
-  content += MakeBench(player); // 玩家自己的棋子座位
-
-  board_div.innerHTML = content;
-  ClearAllBackgrounds();
-
-  AddMoveEventListeners();
-  console.log("Exit CreateCustomBoard");
+  return { ...mainBoardState, ...player1BenchState, ...player2BenchState };
 }
 
 // 一旦棋盤和棋子被創建，調用以啟用拖放功能
